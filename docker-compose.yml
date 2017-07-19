@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  vault:
+    image: 'vault'
+    ports:
+      - '8200:8200'
+    restart: always
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-root-token"
+
+  mysql-server:
+    image: 'mysql'
+    ports:
+      - '3306:3306'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'WarHead'
+
+  vault-mysql-config:
+    build:
+      context: .
+      dockerfile: Dockerfile-vault-config
+    links:
+      - 'vault'
+      - 'mysql-server'
+    restart: 'on-failure'
+    environment:
+      VAULT_ADDR: 'http://vault:8200'
+      VAULT_TOKEN: 'vault-root-token'
+      MYSQL_DB_USERNAME: 'root'
+      MYSQL_DB_PASSWORD: 'WarHead'
+      MYSQL_DB_HOST: 'mysql-server'
+      MYSQL_DB_PORT: '3306'
+      MYSQL_DB_NAME: 'test'
+      TTL: '1m'
+
+

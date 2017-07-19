@@ -1,0 +1,8 @@
+FROM vault
+
+RUN apk update && apk add bash
+
+COPY vault_setup.sh /vault_setup.sh
+RUN chmod +x /vault_setup.sh
+
+ENTRYPOINT ["/vault_setup.sh"]
