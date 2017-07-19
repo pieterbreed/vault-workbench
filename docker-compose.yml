@@ -42,7 +42,7 @@ services:
     links:
       - 'vault'
       - 'mysql-server'
-    restart: 'on-failure'
+    restart: 'always'
     environment:
       VAULT_ADDR: 'http://vault:8200'
       VAULT_TOKEN: 'vault-client-token'

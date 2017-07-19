@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # read returns non-zero so we wait for 'set -e' until after we have these vars
+mount_point='mysql'
 
 read -r -d '' sql_create_full <<EOF
 CREATE DATABASE IF NOT EXISTS ${MYSQL_DB_NAME:?};
@@ -33,8 +34,6 @@ echo "Found mysql, continuing..."
 
 ##############################
 # Setup the mysql mount point
-
-mount_point='mysql'
 
 # check if vault is set up or not, bail early
 if ! vault token-lookup > /dev/null 2>&1; then echo "Set up valid VAULT_ADDR and VAULT_TOKEN."; exit 1; fi

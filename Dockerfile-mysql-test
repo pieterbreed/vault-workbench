@@ -16,6 +16,17 @@ RUN echo "${VAULT_SHA256}  /tmp/vault.zip" > /tmp/vault.sha256 \
 && chmod +x /bin/vault \
 && rm /tmp/vault.zip
 
+ENV ENVCONSUL_VERSION 0.6.2
+ENV ENVCONSUL_SHA256 c86ecd5b1cac5b6d59326e495809ce4778ecca0bf2e41b2a650613b865f2565b
+
+ADD https://releases.hashicorp.com/envconsul/${ENVCONSUL_VERSION}/envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip /tmp/envconsul.zip
+RUN echo "${ENVCONSUL_SHA256}  /tmp/envconsul.zip" > /tmp/envconsul.sha256 \
+  && sha256sum -c /tmp/envconsul.sha256 \
+  && cd /bin \
+  && unzip /tmp/envconsul.zip \
+  && chmod +x /bin/envconsul \
+  && rm /tmp/envconsul.zip
+
 WORKDIR /
 COPY mysql_test.sh /
 RUN chmod +x mysql_test.sh
