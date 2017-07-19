@@ -1,5 +1,36 @@
 #!/bin/bash
 
+# read returns non-zero so we wait for 'set -e' until after we have these vars
+
+read -r -d '' sql_create_full <<EOF
+CREATE DATABASE IF NOT EXISTS ${MYSQL_DB_NAME:?};
+CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';
+GRANT ALL PRIVILEGES ON ${MYSQL_DB_NAME:?}.* TO '{{name}}'@'%';
+EOF
+
+read -r -d '' sql_revoke <<EOF
+DROP USER '{{name}}';
+FLUSH PRIVILEGES;
+EOF
+
+read -r -d '' policy <<EOF
+path "$mount_point/creds/full" {
+	policy = "read"
+}
+EOF
+
+set -e
+
+###########################################
+# wait for mysql to come online/open a port
+
+while ! nc -z "${MYSQL_DB_HOST:?}" "${MYSQL_DB_PORT:?}"; do
+	echo "Waiting for mysql to come online at ${MYSQL_DB_HOST:?}:${MYSQL_DB_PORT:?}..."
+	sleep 2.5
+done
+
+echo "Found mysql, continuing..."
+
 ##############################
 # Setup the mysql mount point
 
@@ -23,31 +54,15 @@ vault write "$mount_point/config/connection" \
 echo "vault write $mount_point/config/lease ..."
 vault write $mount_point/config/lease lease=$TTL lease_max=$TTL
 
-read -r -d '' sql_create_full <<EOF
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DB_NAME:?};
-CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DB_NAME:?}.* TO '{{name}}'@'%';
-EOF
-
-read -r -d '' sql_revoke <<EOF
-DROP USER '{{name}}';
-FLUSH PRIVILEGES;
-EOF
-
 echo "vault write $mount_point/roles/full ..."
 vault write "$mount_point/roles/full" \
 	sql="$sql_create_full" \
 	revocation_sql="$sql_revoke"
 
-##############################
-# create a policy that allows mysql creds
-
-read -r -d '' policy <<EOF
-path "$mount_point/creds/full" {
-	policy = "read"
-}
-EOF
+###################################################
+# create a policy that allows access to mysql creds
 
 vault policy-write $mount_point <(echo -e "$policy")
 vault token-create -policy="$mount_point" -id="vault-client-token"
+
 

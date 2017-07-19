@@ -35,4 +35,20 @@ services:
       MYSQL_DB_NAME: 'test'
       TTL: '1m'
 
+  mysql-test:
+    build:
+      context: .
+      dockerfile: Dockerfile-mysql-test
+    links:
+      - 'vault'
+      - 'mysql-server'
+    restart: 'on-failure'
+    environment:
+      VAULT_ADDR: 'http://vault:8200'
+      VAULT_TOKEN: 'vault-client-token'
+      MYSQL_DB_HOST: 'mysql-server'
+      MYSQL_DB_PORT: '3306'
+      MYSQL_DB_NAME: 'test'
+
+
 
