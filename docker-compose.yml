@@ -33,7 +33,9 @@ services:
       MYSQL_DB_HOST: 'mysql-server'
       MYSQL_DB_PORT: '3306'
       MYSQL_DB_NAME: 'test'
-      TTL: '1m'
+      MYSQL_VAULT_LEASE: '2m'      
+      MYSQL_VAULT_MAX_LEASE: '4m'
+      TOKEN_TTL: '1m'
 
   mysql-test:
     build:
@@ -49,6 +51,7 @@ services:
       MYSQL_DB_HOST: 'mysql-server'
       MYSQL_DB_PORT: '3306'
       MYSQL_DB_NAME: 'test'
+
 
 
 

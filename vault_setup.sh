@@ -49,9 +49,9 @@ vault write "$mount_point/config/connection" \
 	connection_url="${MYSQL_DB_USERNAME:?}:${MYSQL_DB_PASSWORD:?}@tcp(${MYSQL_DB_HOST:?}:${MYSQL_DB_PORT:?})/" \
 	> /dev/null 2>&1
 
-# short ttl
+# create the lease with configured value
 echo "vault write $mount_point/config/lease ..."
-vault write $mount_point/config/lease lease=$TTL lease_max=$TTL
+vault write $mount_point/config/lease lease=$MYSQL_VAULT_LEASE lease_max=$MYSQL_VAULT_MAX_LEASE
 
 echo "vault write $mount_point/roles/full ..."
 vault write "$mount_point/roles/full" \
@@ -62,6 +62,8 @@ vault write "$mount_point/roles/full" \
 # create a policy that allows access to mysql creds
 
 vault policy-write $mount_point <(echo -e "$policy")
-vault token-create -policy="$mount_point" -id="vault-client-token"
+vault token-create -policy="$mount_point" \
+                   -id="vault-client-token" \
+                   -ttl=$TOKEN_TTL
 
 

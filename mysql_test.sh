@@ -71,5 +71,6 @@ done
 while true; do
 	date
 	to_mysql "select count(*) from test"
+	insert_data
 	sleep 1
 done
