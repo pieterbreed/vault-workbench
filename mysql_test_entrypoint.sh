@@ -26,5 +26,24 @@ done
 # all about getting secrets and loading them into the environment
 
 # read the credentials and run the test
-envconsul -once -secret mysql/creds/full -upcase ./mysql_test.sh
+
+cat > envconsul.config <<EOF
+vault {
+  address = "$VAULT_ADDR"
+  renew = true
+}
+
+secret {
+  path = "mysql/creds/full"
+  format = "MYSQL_DB_{{ key }}"
+  no_prefix = true
+}
+
+EOF
+
+envconsul -once \
+          -upcase \
+          -config envconsul.config \
+          -log-level debug \
+          ./mysql_test.sh
 

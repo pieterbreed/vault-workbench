@@ -41,8 +41,8 @@ function run_test {
 # vault gives us 'dirty' environment variables
 # we need to rename them so our scripts look cool
 
-export MYSQL_DB_PASSWORD="$MYSQL_CREDS_FULL_PASSWORD"
-export MYSQL_DB_USERNAME="$MYSQL_CREDS_FULL_USERNAME"
+# export MYSQL_DB_PASSWORD="$MYSQL_CREDS_FULL_PASSWORD"
+# export MYSQL_DB_USERNAME="$MYSQL_CREDS_FULL_USERNAME"
 
 ######################################
 # this is the steady-state of the test
