@@ -28,7 +28,7 @@ RUN echo "${ENVCONSUL_SHA256}  /tmp/envconsul.zip" > /tmp/envconsul.sha256 \
   && rm /tmp/envconsul.zip
 
 WORKDIR /
-COPY mysql_test.sh /
-RUN chmod +x mysql_test.sh
+COPY mysql_test.sh mysql_test_entrypoint.sh /
+RUN chmod +x mysql_test.sh && chmod +x mysql_test_entrypoint.sh
 
-ENTRYPOINT ["/mysql_test.sh"]
+ENTRYPOINT ["/mysql_test_entrypoint.sh"]
