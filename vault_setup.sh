@@ -18,6 +18,10 @@ read -r -d '' policy <<EOF
 path "$mount_point/creds/full" {
 	policy = "read"
 }
+
+path "sys/renew/${mount_point}*" {
+	capabilities = ["update"]
+}
 EOF
 
 set -e

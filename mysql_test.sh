@@ -2,6 +2,8 @@
 
 set -e
 
+instance=`date +%s`
+
 ##########################
 # funcs, so we can compose
 
@@ -30,7 +32,7 @@ function run_test {
 	done
 	
 	while true; do
-		date
+		echo "$instance:`date`"
 		to_mysql "select count(*) from test"
 		insert_data
 		sleep 1

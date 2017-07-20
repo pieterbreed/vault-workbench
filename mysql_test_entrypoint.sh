@@ -41,8 +41,7 @@ secret {
 
 EOF
 
-envconsul -once \
-          -upcase \
+envconsul -upcase \
           -config envconsul.config \
           -log-level debug \
           ./mysql_test.sh

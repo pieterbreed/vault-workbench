@@ -44,7 +44,9 @@ services:
     links:
       - 'vault'
       - 'mysql-server'
-    restart: 'always'
+#    restart: 'always'
+    volumes:
+      - '/Users/pieterbreed/go/bin/envconsul:/bin/envconsul'
     environment:
       VAULT_ADDR: 'http://vault:8200'
       VAULT_TOKEN: 'vault-client-token'
